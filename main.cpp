@@ -12,7 +12,7 @@ int playerOScore = 0;
 int gameState = 0;
 int gameMode = 0;
 char winnerMessage[50];
-
+int totalGames = 0;
 Texture2D xTexture;
 Texture2D oTexture;
 Texture2D menuBackground;
@@ -28,13 +28,13 @@ void DrawBoard() {
             float scale = (scaleX < scaleY) ? scaleX : scaleY;
 
             if (board[i][j] == PLAYER_X) {
-                
+
                 Vector2 position = { cell.x + (cell.width - (xTexture.width * scale)) / 2,
                                      cell.y + (cell.height - (xTexture.height * scale)) / 2 };
                 DrawTextureEx(xTexture, position, 0.0f, scale, WHITE);
             }
             else if (board[i][j] == PLAYER_O) {
-                
+
                 scaleX = 100.0f / oTexture.width;
                 scaleY = 100.0f / oTexture.height;
                 scale = (scaleX < scaleY) ? scaleX : scaleY;
@@ -97,7 +97,7 @@ void ComputerMove() {
         }
     }
 
-    
+
     int x, y;
     do {
         x = GetRandomValue(0, BOARD_SIZE - 1);
@@ -112,9 +112,11 @@ void DrawMenu() {
     DrawText("Tic-Tac-Toe", 300, 50, 40, BLACK);
     DrawText("Press [1] for Play with AI", 200, 150, 20, DARKGRAY);
     DrawText("Press [2] for Play with Player", 200, 200, 20, DARKGRAY);
-    DrawText("Score", 300, 250, 30, BLACK);
-    DrawText(TextFormat("Player X: %d", playerXScore), 300, 300, 20, RED);
-    DrawText(TextFormat("Player O: %d", playerOScore), 300, 340, 20, BLUE);
+    DrawText("Press [ESC] to Exit", 200, 250, 20, DARKGRAY);
+    DrawText("Score", 300, 300, 30, BLACK);
+    DrawText(TextFormat("Player X: %d", playerXScore), 300, 350, 20, RED);
+    DrawText(TextFormat("Player O: %d", playerOScore), 300, 390, 20, BLUE);
+    DrawText(TextFormat("Total Games: %d", totalGames), 300, 430, 20, DARKGRAY);
 }
 
 void DrawGameOver() {
@@ -126,21 +128,25 @@ void DrawDraw() {
     DrawText("It's a Draw!", 300, 50, 40, BLACK);
     DrawText("Press [ENTER] to play again", 200, 150, 20, DARKGRAY);
 }
-
 int main() {
     InitWindow(800, 600, "Tic-Tac-Toe");
     SetTargetFPS(60);
 
-    xTexture = LoadTexture("C:/Users/lenovo/Documents/images/foni-papik-pro-myzx-p-kartinki-krestik-na-prozrachnom-fone-1.png");
-    oTexture = LoadTexture("C:/Users/lenovo/Documents/images/8237182.png");
+    xTexture = LoadTexture("C:/Users/lenovo/Documents/images/Снимок экрана 2025-01-25 164842.png");
+    oTexture = LoadTexture("C:/Users/lenovo/Documents/images/Снимок экрана 2025-01-25 164859.png");
     menuBackground = LoadTexture("C:/Users/lenovo/Documents/images/1660149279_2-kartinkin-net-p-fon-dlya-menyu-igri-krasivo-2.png");
 
     ResetBoard();
     gameState = 0;
 
     while (!WindowShouldClose()) {
+    
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            break;
+        }
 
         switch (gameState) {
         case 0:
@@ -170,14 +176,17 @@ int main() {
                     if (winner == PLAYER_X) {
                         playerXScore++;
                         sprintf(winnerMessage, "Player X wins!");
+                        totalGames++;
                         gameState = 3;
                     }
                     else if (winner == PLAYER_O) {
                         playerOScore++;
                         sprintf(winnerMessage, "Player O wins!");
+                        totalGames++;
                         gameState = 3;
                     }
                     else if (winner == -1) {
+                        totalGames++;
                         gameState = 4;
                     }
                     else {
@@ -197,11 +206,9 @@ int main() {
                             currentPlayer = PLAYER_X;
                         }
                     }
-
                 }
             }
             break;
-
 
         case 3:
             DrawGameOver();
